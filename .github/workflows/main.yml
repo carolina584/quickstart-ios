@@ -1,35 +1,17 @@
-name: Prueba Final Caro
+name: Rayos X Repositorio
 on:
   workflow_dispatch:
 
 jobs:
-  build_ios:
+  listar_todo:
     runs-on: macos-latest
     steps:
-      - name: Checkout del código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Encontrar y preparar proyecto
+      - name: ¿Qué hay aquí?
         run: |
-          # Buscamos dónde está el Podfile realmente
-          PODFILE_PATH=$(find . -name "Podfile" -exec dirname {} \;)
-          echo "El Podfile está en: $PODFILE_PATH"
-          cd "$PODFILE_PATH"
-          pod install
-
-      - name: Compilar para Simulador
-        run: |
-          # Buscamos el workspace y compilamos desde ahí
-          WORKSPACE_PATH=$(find . -name "*.xcworkspace" -exec dirname {} \;)
-          cd "$WORKSPACE_PATH"
-          xcodebuild -workspace *.xcworkspace \
-            -scheme AnalyticsExample \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -derivedDataPath build
-
-      - name: Guardar App para Appetize
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-simulador
-          path: "**/build/Build/Products/Debug-iphonesimulator/*.app"
+          echo "--- LISTA DE CARPETAS RAÍZ ---"
+          ls -F
+          echo "--- BUSCANDO TODOS LOS PODFILES EN EL REPO ---"
+          find . -name "Podfile"
