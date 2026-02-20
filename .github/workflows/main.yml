@@ -9,16 +9,15 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: ¿Dónde estás, archivo?
+      - name: Instalar dependencias (CocoaPods)
         run: |
-          echo "--- Contenido de analytics ---"
-          ls -F analytics
-          echo "--- Contenido de la subcarpeta ---"
-          ls -F analytics/AnalyticsExample
+          cd analytics/AnalyticsExample
+          pod install
 
       - name: Compilar para Simulador
         run: |
-          xcodebuild -workspace analytics/AnalyticsExample/AnalyticsExample.xcworkspace \
+          cd analytics/AnalyticsExample
+          xcodebuild -workspace AnalyticsExample.xcworkspace \
             -scheme AnalyticsExample \
             -configuration Debug \
             -sdk iphonesimulator \
