@@ -1,6 +1,6 @@
 name: Mi Prueba de Humo iOS
 on:
-  workflow_dispatch: # Esto activa el botón de "Play" manual
+  workflow_dispatch:
 
 jobs:
   build_ios:
@@ -11,13 +11,19 @@ jobs:
 
       - name: Instalar dependencias (CocoaPods)
         run: |
-          cd analytics
+          cd analytics/AnalyticsExample
           pod install
 
       - name: Compilar para Simulador
         run: |
-          xcodebuild -workspace analytics/AnalyticsExample.xcworkspace \
+          xcodebuild -workspace analytics/AnalyticsExample/AnalyticsExample.xcworkspace \
             -scheme AnalyticsExample \
             -configuration Debug \
             -sdk iphonesimulator \
             -derivedDataPath build
+
+      - name: Guardar App para Appetize
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-simulador
+          path: analytics/AnalyticsExample/build/Build/Products/Debug-iphonesimulator/AnalyticsExample.app
