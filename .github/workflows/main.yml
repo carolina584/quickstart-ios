@@ -1,4 +1,4 @@
-name: Prueba Humo IOS
+name: Prueba Final Caro
 on:
   workflow_dispatch:
 
@@ -9,15 +9,20 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Instalar dependencias (CocoaPods)
+      - name: Encontrar y preparar proyecto
         run: |
-          cd analytics/AnalyticsExample
+          # Buscamos dónde está el Podfile realmente
+          PODFILE_PATH=$(find . -name "Podfile" -exec dirname {} \;)
+          echo "El Podfile está en: $PODFILE_PATH"
+          cd "$PODFILE_PATH"
           pod install
 
       - name: Compilar para Simulador
         run: |
-          cd analytics/AnalyticsExample
-          xcodebuild -workspace AnalyticsExample.xcworkspace \
+          # Buscamos el workspace y compilamos desde ahí
+          WORKSPACE_PATH=$(find . -name "*.xcworkspace" -exec dirname {} \;)
+          cd "$WORKSPACE_PATH"
+          xcodebuild -workspace *.xcworkspace \
             -scheme AnalyticsExample \
             -configuration Debug \
             -sdk iphonesimulator \
@@ -27,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-simulador
-          path: analytics/AnalyticsExample/build/Build/Products/Debug-iphonesimulator/AnalyticsExample.app
+          path: "**/build/Build/Products/Debug-iphonesimulator/*.app"
