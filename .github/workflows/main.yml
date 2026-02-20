@@ -1,4 +1,4 @@
-name: Prueba Final Caro - Inteligencia Total
+name: Prueba Final Caro - Victoria Total
 on:
   workflow_dispatch:
 
@@ -9,42 +9,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rastrear Proyecto e Instalar
+      - name: Preparar, Instalar y Compilar
         run: |
-          # 1. Buscamos el proyecto (restringimos a analytics para que no se distraiga con database)
+          # 1. Encontrar el proyecto de analytics
           PROYECTO_PATH=$(find ./analytics -name "*.xcodeproj" | head -n 1)
           DIRECTORIO=$(dirname "$PROYECTO_PATH")
-          NOMBRE_PROYECTO=$(basename "$PROYECTO_PATH")
           NOMBRE_TARGET=$(basename "$PROYECTO_PATH" .xcodeproj)
           
-          echo "Directorio: $DIRECTORIO"
-          echo "Proyecto: $NOMBRE_PROYECTO"
-          echo "Target: $NOMBRE_TARGET"
-          
+          echo "Trabajando en: $DIRECTORIO"
           cd "$DIRECTORIO"
           
-          # 2. Creamos el Podfile usando las variables automáticas
+          # 2. Crear Podfile
           cat <<EOF > Podfile
           platform :ios, '15.0'
-          project '$NOMBRE_PROYECTO'
+          project '$NOMBRE_TARGET.xcodeproj'
           use_frameworks!
           target '$NOMBRE_TARGET' do
             pod 'FirebaseAnalytics'
           end
           EOF
           
+          # 3. Instalar
           pod install
-
-      - name: Compilar para Simulador
-        run: |
-          PROYECTO_PATH=$(find ./analytics -name "*.xcodeproj" | head -n 1)
-          DIRECTORIO=$(dirname "$PROYECTO_PATH")
-          NOMBRE_TARGET=$(basename "$PROYECTO_PATH" .xcodeproj)
-          cd "$DIRECTORIO"
           
-          WORKSPACE=$(ls | grep .xcworkspace)
-          
-          xcodebuild -workspace "$WORKSPACE" \
+          # 4. Compilar (usando el workspace recién creado)
+          xcodebuild -workspace "$NOMBRE_TARGET.xcworkspace" \
             -scheme "$NOMBRE_TARGET" \
             -configuration Debug \
             -sdk iphonesimulator \
