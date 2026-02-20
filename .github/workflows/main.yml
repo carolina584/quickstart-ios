@@ -9,9 +9,12 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: ¿Dónde está el Podfile?
+      - name: ¿Dónde estás, archivo?
         run: |
-          ls -R analytics
+          echo "--- Contenido de analytics ---"
+          ls -F analytics
+          echo "--- Contenido de la subcarpeta ---"
+          ls -F analytics/AnalyticsExample
 
       - name: Compilar para Simulador
         run: |
