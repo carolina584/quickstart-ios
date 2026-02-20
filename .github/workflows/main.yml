@@ -1,4 +1,4 @@
-name: Prueba Final Caro - Rescate
+name: Prueba Final Caro - El Regreso
 on:
   workflow_dispatch:
 
@@ -9,11 +9,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Descargar Podfile Faltante
+      - name: Crear Podfile y Instalar
         run: |
+          mkdir -p analytics/AnalyticsExample
           cd analytics/AnalyticsExample
-          # Le robamos el Podfile directamente al repo original de Google
-          curl -O https://raw.githubusercontent.com/firebase/quickstart-ios/master/analytics/AnalyticsExample/Podfile
+          
+          # Creamos el archivo Podfile desde cero
+          cat <<EOF > Podfile
+          platform :ios, '15.0'
+          use_frameworks!
+
+          target 'AnalyticsExample' do
+            pod 'FirebaseAnalytics'
+          end
+          EOF
+          
           pod install
 
       - name: Compilar para Simulador
@@ -23,7 +33,8 @@ jobs:
             -scheme AnalyticsExample \
             -configuration Debug \
             -sdk iphonesimulator \
-            -derivedDataPath build
+            -derivedDataPath build \
+            -quiet
 
       - name: Guardar App para Appetize
         uses: actions/upload-artifact@v4
