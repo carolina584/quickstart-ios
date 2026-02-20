@@ -15,7 +15,7 @@ jobs:
 
       - name: Compilar para Simulador
         run: |
-          xcodebuild -workspace analytics/AnalyticsExample.xcworkspace \
+          xcodebuild -workspace analytics/AnalyticsExample/AnalyticsExample.xcworkspace \
             -scheme AnalyticsExample \
             -configuration Debug \
             -sdk iphonesimulator \
@@ -25,4 +25,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-simulador
-          path: analytics/build/Build/Products/Debug-iphonesimulator/AnalyticsExample.app
+          path: analytics/AnalyticsExample/build/Build/Products/Debug-iphonesimulator/AnalyticsExample.app
