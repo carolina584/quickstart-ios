@@ -1,0 +1,23 @@
+name: Mi Prueba de Humo iOS
+on:
+  workflow_dispatch: # Esto activa el botón de "Play" manual
+
+jobs:
+  build_ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias (CocoaPods)
+        run: |
+          cd analytics
+          pod install
+
+      - name: Compilar para Simulador
+        run: |
+          xcodebuild -workspace analytics/AnalyticsExample.xcworkspace \
+            -scheme AnalyticsExample \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath build
