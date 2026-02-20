@@ -1,4 +1,4 @@
-name: Prueba Final Caro - El Rastreador
+name: Prueba Final Caro - Inteligencia Total
 on:
   workflow_dispatch:
 
@@ -11,22 +11,24 @@ jobs:
 
       - name: Rastrear Proyecto e Instalar
         run: |
-          # 1. Buscamos dónde está el archivo .xcodeproj realmente
-          PROYECTO_PATH=$(find . -name "*.xcodeproj" -not -path "*/Pods/*" | head -n 1)
+          # 1. Buscamos el proyecto (restringimos a analytics para que no se distraiga con database)
+          PROYECTO_PATH=$(find ./analytics -name "*.xcodeproj" | head -n 1)
           DIRECTORIO=$(dirname "$PROYECTO_PATH")
           NOMBRE_PROYECTO=$(basename "$PROYECTO_PATH")
+          NOMBRE_TARGET=$(basename "$PROYECTO_PATH" .xcodeproj)
           
-          echo "Encontramos el proyecto en: $DIRECTORIO"
-          echo "Nombre del archivo: $NOMBRE_PROYECTO"
+          echo "Directorio: $DIRECTORIO"
+          echo "Proyecto: $NOMBRE_PROYECTO"
+          echo "Target: $NOMBRE_TARGET"
           
           cd "$DIRECTORIO"
           
-          # 2. Creamos el Podfile dinámico
+          # 2. Creamos el Podfile usando las variables automáticas
           cat <<EOF > Podfile
           platform :ios, '15.0'
           project '$NOMBRE_PROYECTO'
           use_frameworks!
-          target 'AnalyticsExample' do
+          target '$NOMBRE_TARGET' do
             pod 'FirebaseAnalytics'
           end
           EOF
@@ -35,15 +37,15 @@ jobs:
 
       - name: Compilar para Simulador
         run: |
-          PROYECTO_PATH=$(find . -name "*.xcodeproj" -not -path "*/Pods/*" | head -n 1)
+          PROYECTO_PATH=$(find ./analytics -name "*.xcodeproj" | head -n 1)
           DIRECTORIO=$(dirname "$PROYECTO_PATH")
+          NOMBRE_TARGET=$(basename "$PROYECTO_PATH" .xcodeproj)
           cd "$DIRECTORIO"
           
-          # Buscamos el workspace que creó CocoaPods
           WORKSPACE=$(ls | grep .xcworkspace)
           
           xcodebuild -workspace "$WORKSPACE" \
-            -scheme AnalyticsExample \
+            -scheme "$NOMBRE_TARGET" \
             -configuration Debug \
             -sdk iphonesimulator \
             -derivedDataPath build \
