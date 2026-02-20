@@ -1,17 +1,32 @@
-name: Rayos X Repositorio
+name: Prueba Final Caro - Rescate
 on:
   workflow_dispatch:
 
 jobs:
-  listar_todo:
+  build_ios:
     runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: ¿Qué hay aquí?
+      - name: Descargar Podfile Faltante
         run: |
-          echo "--- LISTA DE CARPETAS RAÍZ ---"
-          ls -F
-          echo "--- BUSCANDO TODOS LOS PODFILES EN EL REPO ---"
-          find . -name "Podfile"
+          cd analytics/AnalyticsExample
+          # Le robamos el Podfile directamente al repo original de Google
+          curl -O https://raw.githubusercontent.com/firebase/quickstart-ios/master/analytics/AnalyticsExample/Podfile
+          pod install
+
+      - name: Compilar para Simulador
+        run: |
+          cd analytics/AnalyticsExample
+          xcodebuild -workspace AnalyticsExample.xcworkspace \
+            -scheme AnalyticsExample \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath build
+
+      - name: Guardar App para Appetize
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-simulador
+          path: analytics/AnalyticsExample/build/Build/Products/Debug-iphonesimulator/AnalyticsExample.app
