@@ -1,4 +1,4 @@
-name: Prueba Final Caro - El Regreso
+name: Prueba Final Caro - La Vencida
 on:
   workflow_dispatch:
 
@@ -11,12 +11,12 @@ jobs:
 
       - name: Crear Podfile y Instalar
         run: |
-          mkdir -p analytics/AnalyticsExample
           cd analytics/AnalyticsExample
           
-          # Creamos el archivo Podfile desde cero
+          # Creamos el Podfile con la ruta al proyecto
           cat <<EOF > Podfile
           platform :ios, '15.0'
+          project 'AnalyticsExample.xcodeproj'
           use_frameworks!
 
           target 'AnalyticsExample' do
