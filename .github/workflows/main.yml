@@ -9,10 +9,9 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Instalar dependencias (CocoaPods)
+      - name: ¿Dónde está el Podfile?
         run: |
-          cd analytics
-          pod install
+          ls -R analytics
 
       - name: Compilar para Simulador
         run: |
